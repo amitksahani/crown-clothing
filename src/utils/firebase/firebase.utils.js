@@ -1,5 +1,10 @@
 import {initializeApp} from 'firebase/app'
-import { getAuth, signInWithRedirect, signInWithPopup, GoogleAuthProvider} from 'firebase/auth'
+import { 
+  getAuth, 
+  createUserWithEmailAndPassword, 
+  signInWithPopup, 
+  GoogleAuthProvider, 
+} from 'firebase/auth'
 import {doc, getDoc, getFirestore, setDoc} from 'firebase/firestore'
 
 // Your web app's Firebase configuration
@@ -10,7 +15,7 @@ const firebaseConfig = {
     storageBucket: "crown-clothing-db-ba8b7.appspot.com",
     messagingSenderId: "217896776804",
     appId: "1:217896776804:web:62b5fa24231f1752525b71"
-  };
+  }; 
   
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
@@ -24,7 +29,7 @@ const firebaseConfig = {
   export const signInWithGooglePopup = () => signInWithPopup(auth, provider)
 
   export const db = getFirestore()
-  export const createUserDocumentFromAuth = async (userAuth)=>{
+  export const createUserDocumentFromAuth = async (userAuth, additionalInfo)=>{
     const userDocRef = doc(db, 'user', userAuth.uid)
     const userSnapshot = await getDoc(userDocRef);
     console.log(userSnapshot.exists())
@@ -36,11 +41,17 @@ const firebaseConfig = {
         await setDoc(userDocRef,{
           displayName,
           email,
-          createdAt
+          createdAt,
+          ...additionalInfo
         } )
       } catch (error) {
         console.log('Error', error.message)
       }
     }
     return userDocRef;
+  }
+
+  export const createAuthUserWithEmailAndPassword = async (email, password) =>{
+    if(!email || !password) return
+    return await createUserWithEmailAndPassword(auth, email, password)
   }
