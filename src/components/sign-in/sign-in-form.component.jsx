@@ -3,6 +3,7 @@ import { signInWithGooglePopup, createAuthUserWithEmailAndPassword, createUserDo
 import FormInput from "../form-input/form-input.component";
 import './sign-in-form.styles.scss'
 import Button from "../button/button.component";
+
 const defaultFormFields = {
     email:'',
     password:'',
@@ -24,15 +25,14 @@ const SignInForm = () =>{
     }
 
     const signInWithGoogle = async ()=>{
-        const {user} = await signInWithGooglePopup()
-        await createUserDocumentFromAuth(user)
+        await signInWithGooglePopup()
     }
 
     const handleSubmit = async (event)=>{
         event.preventDefault();
         
         try {
-            const response = await signInAuthUserWithEmailAndPassword(email, password)
+            const {user} = await signInAuthUserWithEmailAndPassword(email, password);
             resetFormFields()
         } catch (error) {
             if(error.code === 'auth/wrong-pasword'){
